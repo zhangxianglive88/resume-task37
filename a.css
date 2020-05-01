@@ -1,0 +1,483 @@
+body{
+    background: #efefef;
+    color: black;/* 或者直接删掉就是黑色 */
+    margin: 0px;
+}
+
+.clearfix::after{  /* 直接使用 */
+    content: '';
+    display: block;
+    clear: both;
+}
+
+a{
+    color: inherit; /* 让a标签继承父亲的颜色，默认是不继承父亲的样式的，因为它有默认样式*/
+    text-decoration: none;
+}
+
+/* 去掉所有元素自带样式 */
+*{
+    margin: 0; 
+    padding: 0;
+}
+
+/* 设置字体不加粗 */
+h1,h2,h3,h4,h5,h6{
+    font-weight: normal;  
+}
+
+/* 去掉所有的列表自带样式 */
+ol,ul{
+    list-style: none;
+}
+
+hr{
+    height: 0;
+    border: none;
+    border-top: 1px solid rgb(222, 222, 222);
+}
+
+/* [data-x].active{
+    outline: 10px solid red;
+} */
+
+[data-x].offset{
+    transform: translateY(150px);
+}
+
+[data-x]{
+    transform: translateY(0px);
+    transition: all 1s;
+}
+
+
+.topNavBar{
+    /* padding: 34px 34px 34px 34px; 上右下左 */
+    padding: 34px 0 34px 0;
+/*  脱离文档流，相对屏幕固定
+    所以body的高度就不会包含topNavBar的高度，直接从banner开始算
+    一旦你脱离了文档流，那么父元素的高度就不受你控制了，不管你了，只管其他文档流的控制
+    position的值为fixed，表示该元素相对屏幕固定，但是会发现一个问题，如果一个东西是fixed
+    定位的，那么它的宽度不会往外扩展，会往内缩？
+    一般的解决方法是设置width：100%，但这也是一个bug的根源（没什么事千万别加）这样会发现
+    “其他”两个字已经快看不见了。此时body的宽度为1583，而topNavBar的高度为1583+2*34，显然这样
+    是存在bug的。
+    解决方法就是将左右padding设为0，然后在外层添加一个div
+    */
+    position: fixed; 
+    top: 0;
+    left: 0;
+    width: 100%;
+    transition: all 0.5s;
+    color:#b7b7b7;
+}
+
+.topNavBar.sticky{
+    background: rgb(239, 239, 239);
+    padding: 15px 15px;
+    box-shadow: 0 0 10px 5px rgba(0, 0, 0, 0.25);
+    z-index: 1;
+    color:#3d4451;
+}
+
+.topNavBar nav{
+    float: right;
+}
+
+.topNavBar-inner{
+    margin-left: 34px;
+    margin-right: 34px;
+}
+
+.topNavBar a{
+    float: left;
+    font-size: 24px;
+    padding-top: 1px;
+}
+
+.topNavBar .logo .rs{
+    color: rgb(232, 103, 107);
+    margin-right: 5px;
+}
+
+.topNavBar .logo .card{
+    color: rgb(154, 157, 162);
+}
+
+.topNavBar nav > ul{
+    list-style: none;
+    margin: 0px; 
+    padding: 0px; 
+}
+/* >后只能接儿子 */
+.topNavBar nav  > ul > li{
+    float: left;
+    margin-left: 17px;
+    margin-right: 17px;
+    position: relative;
+}
+
+.topNavBar nav  > ul > li > a{
+    font-size: 12px;
+    color: inherit;
+    font-weight: bold;
+    border-top: 3px solid transparent;
+    border-bottom: 3px solid transparent;
+    padding-bottom: 5px;
+    padding-top: 5px;
+    display: block;  /* 加上这句就可以使得li包裹着a，所以所有元素都可以是块级元素，也可以是内级元素 */
+    position: relative;
+}
+
+/* .topNavBar nav  > ul > li > a:hover{
+    当鼠标悬停在li元素上时显示边框 
+    border-bottom: 3px solid #e06567;
+} */
+.topNavBar nav  > ul > li.active > a::after,
+.topNavBar nav  > ul > li.highlight > a::after{
+    content: '';
+    display: block;
+    width: 100%;
+    height: 3px;
+    background: #e06567;
+    position: absolute;
+    top:100%;
+    left: 0;
+    animation: menuSlide .3s;
+}
+
+@keyframes menuSlide{
+    from{width: 0;}
+    to{width: 100%;}
+}
+
+.topNavBar .submenu{
+    display: none;
+    position: absolute;
+    top:100%;
+    right: 0;
+    background: white;
+    color: #3d4451;
+}
+
+.topNavBar li.active > .submenu{
+    display: block;
+    animation: submenuSlide .3s;
+}
+
+@keyframes submenuSlide{
+    from{
+        margin-right: 100%;
+    }
+    to{
+        margin-right: 0%;
+    }
+}
+
+/*  
+    nav > ul >li这里的li是左浮动，能缩多小就是多小
+    submenu下的li元素是绝对定位的，如果不给他宽度，能缩多小就多小
+    因此设置submenu下的li元素不要换行 
+*/
+.topNavBar .submenu > li{
+    white-space: nowrap;
+    padding: 5px 5px;
+}
+
+
+.banner{
+    background-image: url(./img/rs-cover.jpg);
+    background-position: center center; /* 设置背景图片居中 */
+    background-size: cover; /* 让图片按比例缩放,不然就是比例就是1:1 */
+    height: 516px;  /* 不到情非得已，千万不要写高度，这个高度就是bug的来源 */
+    /* border: 1px solid red; */
+     /* 但是banner和导航栏是融为一体的，那应该怎么做呢？*/
+}
+
+.banner .mask{
+    height: 515px;  /* 宽度千万不要写，因为是自适应的 */
+    background-color: rgba(0, 0, 0, 0.7);
+}
+
+.userCard{
+    /* border: 1px solid red; */
+    max-width: 930px; /* 如果屏幕宽度小于930，会自适应 */
+    /* 对于一个div元素来说，如果指定了宽度，不管是max-width还是width，写下面两行代码可实现div居中 */
+    margin-left: auto;
+    margin-right: auto;
+    background-color: #fff;
+    box-shadow: 0px 1px 5px 0px;/* 设置盒边框阴影效果 */
+}
+
+.userCard .welcome{
+    background-color: #e6686a;
+    color:white;
+    /*  
+        1.千万不要这么写 width: 70px;height: 29px; 
+            首先这样写会没有反应，因为span是不接受设置宽高的，这是内联元素的一个特点：不能设置宽高。
+            因此可以加一行代码：display：inline-block使span变为行内块元素，结合了行内元素和块级元素的特性。
+            详情请看博客display: inline、block和inline-block：https://blog.csdn.net/qq_33576343/article/details/81744887
+        2.如果写了高度，就要想办法做垂直居中，有人说垂直居中很容易啊，只需要写line-height就好了。
+            如果line-height和height相同，就会自动居中,但会有潜在的bug
+            width:70px;
+            height: 29px;
+            display: inline-block;
+            line-height: 29px;
+            text-align: center;
+        但是不到万不得已是不会指定宽高的，会存在很多bug！！！可以使用padding
+        一旦我的内容发生了改变hello -> hello,you. 那么会出现意想不到的情况。
+    */ 
+    padding: 4px 15px; /* 这种情况下，span的内容可以随意改变，而不会受到影响 */
+    line-height: 21px;  /* 不同浏览器的字体高度不一样，所以最好设置一下行高 */
+    position: relative;
+}
+
+.userCard .triangle{
+    display: block;
+    border: 10px solid transparent;
+    width: 0px;
+    border-left-color: #e6686a;
+    border-top-width: 0px;
+    /* 设置position 
+       子元素里面写position:absolute, 祖先元素里面写position：relative，
+       表示子元素相对于祖先元素是什么位置，即脱离文档流
+    */
+    position: absolute;
+    left: 4px;
+    top: 100%; /* 表示小三角形相对于welcome是百分百的高度 */
+}
+
+.userCard .picture{
+    float: left;
+}
+
+.userCard .text{
+    float: left;
+    margin-left: 65px;
+    width: 450px;
+}
+
+.userCard .text h1{
+    margin-top: 30px;
+    margin-bottom: 8px;
+}
+
+.userCard .text hr{
+    margin: 20px 0;
+}
+
+/* 外面不能加padding，那么我就把它加到它里面的一个多余的div里 */
+.userCard .pictureAndText{
+    padding: 58px 50px 40px 50px;
+}
+
+.userCard dl dt,
+.userCard dl dd{
+    float: left;
+    padding: 6px 0px;
+}
+
+.userCard dl dt{
+    width: 30%;
+    font-weight: bold;
+}
+
+.userCard dl dd{
+    width: 70%;
+    color: rgb(167, 169, 176);
+}
+
+.userCard footer.media{
+    background-color: rgb(232, 103, 107);
+    text-align: center;
+}
+
+.icon {
+    width: 1em; height: 1em;
+    vertical-align: -0.15em;
+    fill: currentColor;
+    overflow: hidden;
+ }
+
+.userCard footer.media > a{
+    /* border: 1px solid black; */
+    display: inline-block;
+    width: 40px;
+    padding: 5px 0px;
+    border-radius: 50%; /* 为元素添加圆角边框，日后可以去细看 */
+    margin: 25px 16px;
+}
+
+.userCard footer.media > a:hover{
+    background-color: rgb(208, 92, 96);
+}
+
+
+.userCard svg{
+     width: 30px;
+     height: 30px;
+     fill: white;
+     /* margin: 0 16px;  */
+     /* 垂直位置上图标偏上，需加上这行代码
+        top，对于内联元素，指的是元素的顶部和当前行框盒子的顶部对齐。这样自然而然就会把多余的高度去掉
+     */
+     vertical-align: top; 
+ }
+
+ body main{
+    margin-top: -345px;
+    margin-bottom: 50px;
+}
+
+body main .downloadResume-loading{
+    text-align: center;
+}
+
+body main .downloadResume{
+    border: 1px solid rgb(203, 205, 207);
+    height: 15px;
+    line-height: 15px;
+    padding: 25px 58px;
+    display: inline-block;
+    color: rgb(61, 68, 81);;
+    background-color: rgba(0, 0, 0, 0);;
+    border-radius: 6px; /* 设置圆角 */
+    font-weight: bold;
+    margin: 36px 0;
+    /* 过渡，转变 
+        当鼠标悬停在a标签上时，会出现一个阴影状态，此时需要通过transition属性来设置
+        悬停的时候会有个过度的时间来显示hover的样式
+    */
+    transition: box-shadow 1s;  
+}
+
+body main .downloadResume:hover{
+    box-shadow: 0px 4px 13px 0px rgba(0, 0, 0, 0.5)
+}
+
+body main .selfIntroduction{
+    width: 930px;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+    font-family: 楷体;
+    line-height: 1.8;
+    font-size: 18px;
+}
+
+section.skills{
+    width: 930px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 50px;
+}
+
+section.skills > h2{
+    color: #3d4451;
+    font-size: 34px;
+    line-height: 1.2;
+    font-weight: 600;
+    text-align: center;
+    padding: 20px 0 32px 0;
+}
+
+section.skills > ol{
+    background: rgb(255, 255, 255);
+    box-shadow: 0px 4px 13px 0px rgba(0, 0, 0, 0.5)
+}
+
+section.skills > ol{
+    font-size: 14px;
+    line-height: 1.1;
+    padding: 43px 50px 11px;
+}
+
+section.skills > ol > li{
+    float: left;
+    width: 48%;
+    /*
+        width: 50%;
+        margin-right: 10px;
+        不能使用margin-right：10px,因为这样做会使得总体宽度为100%+20px,导致一行容纳不下，padding-right也是如此，故不能用。
+        因为此时width是不包括padding、margin的。但是可以使用box-sizing:border-box，这行代码的意思就是
+        此时的width最多包含边框的宽度，当然padding的宽度也就包括了。
+    */
+    /* 
+        虽然解决了上面注释的问题，但是我们的目的只是想让中间留出一部分，而不是改变进度条的长度
+        width:50%
+        box-sizing: border-box;
+        padding-right: 100px;
+    */
+
+}
+
+/*
+    双冒号开头表示的是伪元素 如：::before
+    冒号开头表示的是一种状态，是伪类 如： :nth-child()
+  */
+section.skills > ol > li:nth-child(even){
+    float: right;
+}
+
+section.skills .processBar{
+    height: 5px;
+    background: rgb(250,225,225);
+    border-radius: 5px;
+    margin: 4px 0px 40px;
+    overflow: hidden;
+}
+
+section.skills .processBar > .process{
+    height: 100%;
+    background: red;
+    width: 70%;
+    border-radius: 5px;
+    transform: translateX(0px);
+    transition: all 1s;
+}
+
+section.skills.offset .process{
+    transform: translateX(-100%);
+}
+
+/* portfolio:作品集 */
+section.portfolio{
+    width: 930px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 60px;
+    text-align: center;
+}
+
+section.portfolio > h2{
+    color: #3d4451;
+    font-size: 34px;
+    line-height: 1.2;
+    font-weight: 600;
+    text-align: center;
+    padding: 20px 0 32px 0;
+}
+
+section.portfolio > #mySlides{
+    position: relative;
+}
+
+section.portfolio .swiper-container {
+    width: 680px;
+    height: 570px;
+}
+section.portfolio  .swiper-button-prev,
+section.portfolio  .swiper-button-next{
+    left: 35px;
+    right: auto;
+    top: 50%;
+    height: 64px;
+    width: 64px;
+    background-color: white;
+    border-radius: 50%;
+}
+
+section.portfolio  .swiper-button-next{
+    left: auto;
+    right: 35px;
+}
