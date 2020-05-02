@@ -1,29 +1,45 @@
 !function () {
     let view = document.querySelector('.message')
-    let controller = {
-        view: null,
-        messageList: null,
+    var model = {
+        // AV初始化
         init: function () {
-            this.view = view
-            this.messageList = document.querySelector('#messageList')
-            this.form = view.querySelector('#postMessageForm')
-            this.initAV()
-            this.loadMessage()
-            this.bindEvents()
-        },
-        initAV: function () {
             let APP_ID = "dTpCvioD0aV2Y3vBgu94KrDo-MdYXbMMI"
             let appKey = "WRIa8eNee1F5hql96ayTSs2b"
-            // AV初始化
             AV.init({
                 appId: APP_ID,
                 appKey: appKey,
             })
         },
+        // 获取数据
+        fetch: function () {
+            const query = new AV.Query('Message');
+            return query.find() // promise对象
+        },
+        // 创建数据
+        save: function (name, content) {
+            const Message = AV.Object.extend('Message');
+            const message = new Message();
+            message.set('content', content);
+            message.set('name', name);
+            return message.save() // promise对象
+        }
+    }
+    let controller = {
+        view: null,
+        messageList: null,
+        model: null,
+        init: function () {
+            this.view = view
+            this.model = model
+            this.messageList = document.querySelector('#messageList')
+            this.form = view.querySelector('#postMessageForm')
+            this.model.init()
+            this.loadMessage()
+            this.bindEvents()
+        },
         loadMessage: function () {
             // 从数据库中取数据，展示在页面
-            const query = new AV.Query('Message');
-            query.find().then((messages) => {
+            this.model.fetch().then((messages) => {
                 messages.map((item) => {
                     let content = item.attributes.content
                     let name = item.attributes.name
@@ -31,7 +47,7 @@
                     li.innerText = `${name}:${content}`
                     this.messageList.appendChild(li)
                 })
-            });
+            })
         },
         bindEvents: function () {
             // 向数据库中添加留言，添加成功后刷新当前页面
@@ -40,11 +56,7 @@
                 e.preventDefault()
                 let content = myForm.querySelector('input[name=content]').value
                 let name = myForm.querySelector('input[name=name]').value
-                const Message = AV.Object.extend('Message');
-                const message = new Message();
-                message.set('content', content);
-                message.set('name', name);
-                message.save().then((message) => {
+                this.model.save(name, content).then((message) => {
                     let li = document.createElement('li')
                     li.innerText = `${name}:${content}`
                     this.messageList.appendChild(li)
