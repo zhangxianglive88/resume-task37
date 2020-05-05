@@ -489,6 +489,11 @@ section.portfolio  .swiper-button-next{
     border-radius: 50%;
 }
 
+section.portfolio  .swiper-button-prev:focus,
+section.portfolio  .swiper-button-next:focus{
+    outline: none;
+}
+
 section.portfolio  .swiper-button-next{
     left: auto;
     right: 35px;
